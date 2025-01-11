@@ -1,0 +1,19 @@
+const getCombinedData = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    const statistics = await getStatistics(req, res);
+    const barChartData = await getBarChartData(req, res);
+    const pieChartData = await getPieChartData(req, res);
+    const transactions = await getTransactions(req, res);
+
+    res.status(200).json({
+      statistics,
+      barChartData,
+      pieChartData,
+      transactions
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching combined data", error: error.message });
+  }
+};
