@@ -1,0 +1,28 @@
+import React, { useState } from 'react';
+import TransactionsTable from './TransactionsTable';
+import TransactionStatistics from './TransactionStatistics';
+import TransactionBarChart from './TransactionBarChart';
+import TransactionPieChart from './TransactionPieChart';
+
+const App = () => {
+  const [month, setMonth] = useState('03');
+
+  return (
+    <div>
+      <h1>Transactions Dashboard</h1>
+      <select onChange={(e) => setMonth(e.target.value)} value={month}>
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        {/* Add other months */}
+      </select>
+
+      <TransactionsTable month={month} />
+      <TransactionStatistics month={month} />
+      <TransactionBarChart month={month} />
+      <TransactionPieChart month={month} />
+    </div>
+  );
+};
+
+export default App;
