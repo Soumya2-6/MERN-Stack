@@ -1,0 +1,29 @@
+import React, { useState, useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
+import axios from 'axios';
+
+const TransactionBarChart = ({ month }) => {
+  const [barChartData, setBarChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchBarChartData = async () => {
+      const { data } = await axios.get(`/api/bar-chart?month=${month}`);
+      setBarChartData(data);
+    };
+
+    fetchBarChartData();
+  }, [month]);
+
+  const chartData = {
+    labels: barChartData.map(item => item.range),
+    datasets: [{
+      label: 'Number of Items',
+      data: barChartData.map(item => item.count),
+      backgroundColor: '#4e73df',
+    }]
+  };
+
+  return <Bar data={chartData} />;
+};
+
+export default TransactionBarChart;
