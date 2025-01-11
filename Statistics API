@@ -1,0 +1,27 @@
+const getStatistics = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    const startOfMonth = new Date(`2023-${month}-01`);
+    const endOfMonth = new Date(startOfMonth);
+    endOfMonth.setMonth(startOfMonth.getMonth() + 1);
+
+    const soldItems = await Transaction.aggregate([
+      { $match: { dateOfSale: { $gte: startOfMonth, $lt: endOfMonth }, sold: true } },
+      { $group: { _id: null, totalSold: { $sum: "$price" }, soldCount: { $sum: 1 } } }
+    ]);
+
+    const notSoldItems = await Transaction.aggregate([
+      { $match: { dateOfSale: { $gte: startOfMonth, $lt: endOfMonth }, sold: false } },
+      { $group: { _id: null, notSoldCount: { $sum: 1 } } }
+    ]);
+
+    res.status(200).json({
+      totalSaleAmount: soldItems[0]?.totalSold || 0,
+      totalSoldItems: soldItems[0]?.soldCount || 0,
+      totalNotSoldItems: notSoldItems[0]?.notSoldCount || 0,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching statistics", error: error.message });
+  }
+};
