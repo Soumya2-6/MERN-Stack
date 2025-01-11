@@ -1,0 +1,28 @@
+import React, { useState, useEffect } from 'react';
+import { Pie } from 'react-chartjs-2';
+import axios from 'axios';
+
+const TransactionPieChart = ({ month }) => {
+  const [pieChartData, setPieChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchPieChartData = async () => {
+      const { data } = await axios.get(`/api/pie-chart?month=${month}`);
+      setPieChartData(data);
+    };
+
+    fetchPieChartData();
+  }, [month]);
+
+  const chartData = {
+    labels: pieChartData.map(item => item._id),
+    datasets: [{
+      data: pieChartData.map(item => item.count),
+      backgroundColor: ['#ff6b81', '#ffd93b', '#4e73df'],
+    }]
+  };
+
+  return <Pie data={chartData} />;
+};
+
+export default TransactionPieChart;
