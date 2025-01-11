@@ -1,0 +1,17 @@
+const getPieChartData = async (req, res) => {
+  try {
+    const { month } = req.query;
+    const startOfMonth = new Date(`2023-${month}-01`);
+    const endOfMonth = new Date(startOfMonth);
+    endOfMonth.setMonth(startOfMonth.getMonth() + 1);
+
+    const categoryData = await Transaction.aggregate([
+      { $match: { dateOfSale: { $gte: startOfMonth, $lt: endOfMonth } } },
+      { $group: { _id: "$category", count: { $sum: 1 } } }
+    ]);
+
+    res.status(200).json(categoryData);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching pie chart data", error: error.message });
+  }
+};
